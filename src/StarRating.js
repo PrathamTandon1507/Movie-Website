@@ -32,7 +32,7 @@ export default function StarRating({ maximum = 5 }) {
           <span>
             <Star
               onStar={() => handleStar(i + 1)}
-              full={starClick >= i + 1 || tempRating >= i + 1}
+              full={tempRating ? tempRating >= i + 1 : starClick >= i + 1}
               key={i}
               onHoverIn={() => setTempRating(i + 1)}
               onHoverOut={() => setTempRating(starClick)}
@@ -40,7 +40,7 @@ export default function StarRating({ maximum = 5 }) {
           </span>
         ))}
       </div>
-      <p style={textStyle}>{(starClick && tempRating) || ""}</p>
+      <p style={textStyle}>{starClick || tempRating || ""}</p>
     </div>
   );
 }

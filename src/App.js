@@ -52,6 +52,7 @@ const average = (arr) =>
 
 export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
+  const [watched, setWatched] = useState(tempWatchedData);
 
   return (
     <>
@@ -59,10 +60,13 @@ export default function App() {
         <Results movies={movies} />
       </Navbar>
       <Main>
-        <ListBox className={movies}>
+        <Box>
           <MovieList movies={movies} />
-        </ListBox>
-        <WatchedBox />
+        </Box>
+        <Box>
+          <WatchedSummary watched={watched} />
+          <WatchList watched={watched} />
+        </Box>
       </Main>
     </>
   );
@@ -113,16 +117,33 @@ function Main({ children }) {
   return <main className="main">{children}</main>;
 }
 
-function ListBox({ children }) {
-  const [isOpen1, setIsOpen1] = useState(true);
+function Box({ children }) {
+  const [isOpen, setIsOpen] = useState(true);
 
   return (
     <div className="box">
-      <Button isOpen={isOpen1} setIsOpen={setIsOpen1} />
-      {isOpen1 && children}
+      <Button isOpen={isOpen} setIsOpen={setIsOpen} />
+      {isOpen && children}
     </div>
   );
 }
+
+// function WatchedBox() {
+//   const [isOpen2, setIsOpen2] = useState(true);
+// const [watched, setWatched] = useState(tempWatchedData);
+
+//   return (
+//     <div className="box">
+//       <Button isOpen={isOpen2} setIsOpen={setIsOpen2} />
+//       {isOpen2 && (
+//         <>
+//           <WatchedSummary watched={watched} />
+//           <WatchList watched={watched} />
+//         </>
+//       )}
+//     </div>
+//   );
+// }
 
 function MovieList({ movies }) {
   return (
@@ -146,22 +167,6 @@ function Movie({ movie }) {
         </p>
       </div>
     </li>
-  );
-}
-function WatchedBox() {
-  const [isOpen2, setIsOpen2] = useState(true);
-  const [watched, setWatched] = useState(tempWatchedData);
-
-  return (
-    <div className="box">
-      <Button isOpen={isOpen2} setIsOpen={setIsOpen2} />
-      {isOpen2 && (
-        <>
-          <WatchedSummary watched={watched} />
-          <WatchList watched={watched} />
-        </>
-      )}
-    </div>
   );
 }
 

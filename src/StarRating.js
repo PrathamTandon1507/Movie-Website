@@ -28,7 +28,6 @@ export default function StarRating({
   className = "",
   messages = [],
   defaultRating = 0,
-  onSetRating,
 }) {
   const textStyle = {
     lineHeight: "1",
@@ -43,7 +42,7 @@ export default function StarRating({
 
   function handleStar(index) {
     setStarClick(index);
-    onSetRating(index);
+    setTempRating(index);
   }
 
   return (
@@ -59,7 +58,7 @@ export default function StarRating({
               onHoverOut={() => setTempRating(starClick)}
               color={color}
               size={size}
-              onSetRating={onSetRating}
+              onSetRating={setStarClick}
             />
           </span>
         ))}
@@ -73,15 +72,7 @@ export default function StarRating({
   );
 }
 
-function Star({
-  onStar,
-  onHoverIn,
-  onHoverOut,
-  full,
-  color,
-  size,
-  onSetRating,
-}) {
+function Star({ onStar, onHoverIn, onHoverOut, full, color, size }) {
   const starStyle = {
     width: `${size}px`,
     height: `${size}px`,

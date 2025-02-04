@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const tempMovieData = [
   {
@@ -54,10 +54,22 @@ export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
   const [watched, setWatched] = useState(tempWatchedData);
 
+  const KEY = "ab99ce58";
+  const QUERY = "pulp fiction";
+  useEffect(function () {
+    async function fetchMovies() {
+      const res = await fetch(
+        `http://www.omdbapi.com/?apikey=${KEY}&s=${QUERY}`
+      );
+      const data = await res.json();
+      setMovies(data.Search);
+    }
+    fetchMovies();
+  }, []); //fetching takes place after the page has been rendered [this side effect does not lead to infintite re-rendering due to useEffect] | side-effect : Reaction b/w REACT component and anythign outside that component [http/timers/api's]
   return (
     <>
       <Navbar>
-        <Results movies={movies} />
+        <Results movies={movies} /> {/*because we need to pass movie prop*/}
       </Navbar>
       <Main>
         <Box>

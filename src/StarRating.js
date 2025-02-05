@@ -28,6 +28,7 @@ export default function StarRating({
   className = "",
   messages = [],
   defaultRating = 0,
+  onUserRating,
 }) {
   const textStyle = {
     lineHeight: "1",
@@ -43,6 +44,7 @@ export default function StarRating({
   function handleStar(index) {
     setStarClick(index);
     setTempRating(index);
+    onUserRating(index);
   }
 
   return (

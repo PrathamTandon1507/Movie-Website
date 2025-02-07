@@ -62,12 +62,14 @@ export default function App() {
   const KEY = "ab99ce58";
   useEffect(
     function () {
+      const controller = new AbortController();
       async function fetchMovies() {
         try {
           setError("");
           setIsLoading(true);
           const res = await fetch(
-            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+            { signal: controller.signal }
           );
           if (!res.ok) {
             throw new Error("Something went wrong with fetching movies");
@@ -77,8 +79,9 @@ export default function App() {
             throw new Error("Movie not available!");
           }
           setMovies(data.Search);
+          setError("");
         } catch (err) {
-          setError(err.message);
+          if (err.name !== "AbortError") setError(err.message);
         } finally {
           setIsLoading(false); //because we need to set this to false if there is an error or when the page loads, so either way it needs to become false thats why finally
         }
@@ -90,6 +93,9 @@ export default function App() {
         return;
       }
       fetchMovies();
+      return function () {
+        controller.abort();
+      };
     },
     [query]
   ); //fetching takes place after the page has been rendered [this side effect does not lead to infintite re-rendering due to useEffect] | side-effect : Reaction b/w REACT component and anythign outside that component [http/timers/api's]
@@ -282,6 +288,18 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     [selectedId, setMovieLoading]
   );
 
+  useEffect(
+    function () {
+      if (!title) return;
+      document.title = `Movie - ${title}`;
+
+      return function () {
+        //cleanup function : whenever the state is closed but the effect is still running, it will be reset
+        document.title = "usePopcorn";
+      };
+    },
+    [title]
+  );
   function handleAdd() {
     const watchedMovie = {
       imdbID: selectedId,

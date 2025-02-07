@@ -338,6 +338,13 @@ body {
   align-items: center;
   justify-content: center;
 }
+body {
+  overflow-x: hidden; /* Disables horizontal scrolling */
+}
+
+.box {
+  overflow-x: hidden; /* Disables horizontal scrolling */
+}
 
 /*
 SPACING SYSTEM (px)

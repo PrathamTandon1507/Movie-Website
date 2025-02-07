@@ -93,6 +93,7 @@ export default function App() {
         return;
       }
       fetchMovies();
+      handleCloseMovie();
       return function () {
         controller.abort();
       };
@@ -104,7 +105,7 @@ export default function App() {
     setSelectedId((selectedId) => (selectedId === id ? null : id));
   }
 
-  function handleCloseMovie(id) {
+  function handleCloseMovie() {
     setSelectedId(null);
   }
 
@@ -115,6 +116,19 @@ export default function App() {
   function handleDeleteWatched(id) {
     setWatched((watched) => watched.filter((m) => m.imdbID !== id));
   }
+
+  useEffect(
+    function () {
+      function callback(e) {
+        if (e.code === "Escape") handleCloseMovie();
+      }
+      document.addEventListener("keydown", callback);
+      return function () {
+        document.removeEventListener("keydown", callback); //because event listeners will keep on accumulating with each time a movie is closed, so it will be checked multiple times
+      };
+    },
+    [setSelectedId]
+  );
   return (
     <>
       <Navbar>

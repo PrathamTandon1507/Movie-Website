@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import StarRating from "./StarRating";
 
 const tempMovieData = [
@@ -53,16 +53,20 @@ const average = (arr) =>
 
 export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
-  const [watched, setWatched] = useState([]);
+  // const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState(null);
+  const [watched, setWatched] = useState(function () {
+    const watchedMovie = JSON.parse(localStorage.getItem("watched"));
+    return watchedMovie;
+  });
 
   const KEY = "ab99ce58";
   useEffect(
     function () {
-      const controller = new AbortController();
+      const controller = new AbortController(); //to avoid multiple fetches while searching for the movie, it will only search final letter
       async function fetchMovies() {
         try {
           setError("");
@@ -119,12 +123,19 @@ export default function App() {
 
   useEffect(
     function () {
+      localStorage.setItem("watched", JSON.stringify(watched));
+    },
+    [watched]
+  ); //updates localStorage whenever watched is updated, due to useEffect
+
+  useEffect(
+    function () {
       function callback(e) {
         if (e.code === "Escape") handleCloseMovie();
       }
       document.addEventListener("keydown", callback);
       return function () {
-        document.removeEventListener("keydown", callback); //because event listeners will keep on accumulating with each time a movie is closed, so it will be checked multiple times
+        document.removeEventListener("keydown", callback); //CLEANUP: because event listeners will keep on accumulating with each time a movie is closed, so it will be checked multiple times
       };
     },
     [setSelectedId]
@@ -189,6 +200,22 @@ function Logo() {
 }
 
 function Search({ query, setQuery }) {
+  const inputEle = useRef(null);
+
+  useEffect(
+    function () {
+      function callback(e) {
+        if (document.activeElement === inputEle.current) return;
+        if (e.code === "Enter") {
+          inputEle.current.focus();
+          setQuery("");
+        }
+      }
+      document.addEventListener("keydown", callback);
+      return () => document.addEventListener("keydown", callback);
+    },
+    [setQuery]
+  );
   return (
     <input
       className="search"
@@ -196,6 +223,7 @@ function Search({ query, setQuery }) {
       placeholder="Search movies..."
       value={query}
       onChange={(e) => setQuery(e.target.value)}
+      ref={inputEle}
     />
   );
 }
@@ -431,7 +459,7 @@ function WatchedMovie({ movie, onDeleteWatched }) {
       <div>
         <p>
           <span>⭐️</span>
-          <span>{movie.imdbRating}</span>
+          <span>{movie.imdbRating ? movie.imdbRating : "N/A"}</span>
         </p>
         <p>
           <span>🌟</span>

@@ -2,20 +2,20 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 // import "./index.css";
 // import App from "./App";
-import StarRating from "./StarRating";
-import { useState } from "react";
+// import StarRating from "./StarRating";
+// import { useState } from "react";
 import App from "./App";
 import "./index.css";
 
-function Test() {
-  const [movieRate, setMovieRate] = useState(0);
-  return (
-    <div>
-      <StarRating color="blue" maximum={10} onSetRating={setMovieRate} />
-      <p>The movie is being rated {movieRate} stars</p>
-    </div>
-  );
-}
+// function Test() {
+//   const [movieRate, setMovieRate] = useState(0);
+//   return (
+//     <div>
+//       <StarRating color="blue" maximum={10} onSetRating={setMovieRate} />
+//       <p>The movie is being rated {movieRate} stars</p>
+//     </div>
+//   );
+// }
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

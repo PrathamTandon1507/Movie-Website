@@ -62,7 +62,7 @@ export default function App() {
     const watchedMovie = JSON.parse(localStorage.getItem("watched"));
     return watchedMovie;
   });
-
+  // const [watched, setWatched] = useState(tempWatchedData);
   const KEY = "ab99ce58";
   useEffect(
     function () {
@@ -212,7 +212,7 @@ function Search({ query, setQuery }) {
         }
       }
       document.addEventListener("keydown", callback);
-      return () => document.addEventListener("keydown", callback);
+      return () => document.removeEventListener("keydown", callback);
     },
     [setQuery]
   );
@@ -289,6 +289,14 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
   const [movieLoading, setMovieLoading] = useState(false);
   const [userRating, setUserRating] = useState(0);
 
+  const countRef = useRef(0);
+
+  useEffect(
+    function () {
+      if (userRating) countRef.current = countRef.current + 1;
+    },
+    [userRating]
+  );
   function handleUserRating(rating) {
     setUserRating(rating);
   }
@@ -351,6 +359,7 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
       runtime: Number(runtime.split(" ").at(0)),
       poster,
       userRating: Number(userRating),
+      countRatingDecisons: countRef.current,
     };
     onAddWatched(watchedMovie);
     onCloseMovie();

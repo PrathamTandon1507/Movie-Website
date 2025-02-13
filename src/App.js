@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import StarRating from "./StarRating";
 import { useMovies } from "./useMovies";
 import { useLocalStorageState } from "./useLocalStorageState";
+import { useKey } from "./useKey";
 
 // const tempWatchedData = [
 //   {
@@ -51,19 +52,6 @@ export default function App() {
   function handleDeleteWatched(id) {
     setWatched((watched) => watched.filter((m) => m.imdbID !== id));
   }
-
-  useEffect(
-    function () {
-      function callback(e) {
-        if (e.code === "Escape") handleCloseMovie();
-      }
-      document.addEventListener("keydown", callback);
-      return function () {
-        document.removeEventListener("keydown", callback); //CLEANUP: because event listeners will keep on accumulating with each time a movie is closed, so it will be checked multiple times
-      };
-    },
-    [setSelectedId]
-  );
 
   return (
     <>
@@ -126,21 +114,24 @@ function Logo() {
 
 function Search({ query, setQuery }) {
   const inputEle = useRef(null);
-
-  useEffect(
-    function () {
-      function callback(e) {
-        if (document.activeElement === inputEle.current) return;
-        if (e.code === "Enter") {
-          inputEle.current.focus();
-          setQuery("");
-        }
-      }
-      document.addEventListener("keydown", callback);
-      return () => document.removeEventListener("keydown", callback);
-    },
-    [setQuery]
-  );
+  function inputFocus() {
+    if (document.activeElement === inputEle.current) return;
+    inputEle.current.focus();
+    setQuery("");
+  }
+  useKey("Enter", inputFocus);
+  // useEffect(
+  //   function () {
+  //     function callback(e) {
+  //       if (e.code === "Enter") {
+  //         inputEle.current.focus();
+  //         setQuery("");
+  //       }
+  //     }
+  //     document.addEventListener("keydown", callback);
+  //   },
+  //   [setQuery]
+  // );
   return (
     <input
       className="search"
@@ -288,6 +279,9 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     onAddWatched(watchedMovie);
     onCloseMovie();
   }
+
+  useKey("Escape", onCloseMovie);
+
   return movieLoading ? (
     <Loader />
   ) : (
